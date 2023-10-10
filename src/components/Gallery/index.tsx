@@ -1,15 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Grid } from './styles'
 
-const Gallery: React.FC = () => (
-  <>
-    <Grid>
-      <div>ome</div>
-      <div>ome</div>
-      <div>ome</div>
-      <div>ome</div>
-    </Grid>
-  </>
-)
+interface Props {
+  gallery: unknown[]
+}
+
+const Gallery: React.FC<Props> = ({ gallery }) => {
+  return (
+    <>
+      <Grid>
+        {gallery.map((img) => (
+          <div key={img.id}>{img.title}</div>
+        ))}
+      </Grid>
+    </>
+  )
+}
 
 export default Gallery

@@ -5,12 +5,12 @@ import api from '../libs/api'
 import { prop } from 'ramda'
 
 export interface GalleryState {
-  gallery: unknown[]
+  images: unknown[]
   isLoading: boolean
 }
 
 const initialState: GalleryState = {
-  gallery: [],
+  images: [],
   isLoading: true,
 }
 
@@ -29,8 +29,8 @@ export const gallerySlice = createSlice({
   name: 'gallery',
   initialState,
   reducers: {
-    addToGallery: (state, action: PayloadAction<GalleryState['gallery']>) => {
-      state.gallery.push(action.payload)
+    addToGallery: (state, action: PayloadAction<GalleryState['images']>) => {
+      state.images.concat(action.payload)
     },
     toggleLoading: (state) => {
       state.isLoading = !state.isLoading
@@ -39,15 +39,15 @@ export const gallerySlice = createSlice({
   extraReducers: (builder) =>
     builder
       .addCase(setSection, (state) => {
-        state.gallery = []
+        state.images = []
         state.isLoading = true
       })
       .addCase(setSort, (state) => {
-        state.gallery = []
+        state.images = []
         state.isLoading = true
       })
       .addCase(setWindow, (state) => {
-        state.gallery = []
+        state.images = []
         state.isLoading = true
       })
       .addCase(fetchGallery.pending, (state) => {
@@ -55,14 +55,14 @@ export const gallerySlice = createSlice({
       })
       .addCase(
         fetchGallery.fulfilled,
-        (state, action: PayloadAction<GalleryState['gallery']>) => {
-          state.gallery.push(action.payload)
+        (state, action: PayloadAction<GalleryState['images']>) => {
+          state.images = [...state.images.concat(action.payload)]
           state.isLoading = false
         }
       ),
 })
 
-export const selectGallery = (state: RootState) => state.gallery.gallery
+export const selectGallery = (state: RootState) => state.gallery.images
 export const selectIsLoading = (state: RootState) => state.gallery.isLoading
 
 export const { addToGallery, toggleLoading } = gallerySlice.actions
