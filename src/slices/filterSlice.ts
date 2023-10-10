@@ -1,31 +1,34 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { PageSize, Section, Sort, Window } from '../types/filter'
+import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit'
+import { Section, Sort, Window } from '../types/filter'
+import { RootState } from '../libs/store'
 
-export type FilterState =
+export type FilterState = (
   | {
     section: 'user'
     sort: Sort
-    pageSize: PageSize
     window: null
+    showViral: boolean
   }
   | {
     section: 'top'
     sort: null
-    pageSize: PageSize
     window: Window
+    showViral: null
   }
   | {
     section: 'hot'
     sort: null
-    pageSize: PageSize
     window: null
+    showViral: null
   }
+) & { page: number }
 
 const initialState: FilterState = {
   section: 'hot',
   sort: null,
-  pageSize: 24,
   window: null,
+  showViral: null,
+  page: 1,
 }
 
 export const filterSlice = createSlice({
@@ -33,19 +36,35 @@ export const filterSlice = createSlice({
   initialState: initialState as FilterState,
   reducers: {
     // ktu do kesh cases per secilen gje
-    setSection: (state, action: PayloadAction<Section>) => { },
-    setSort: (state, action: PayloadAction<Sort>) => {
-      if (state.section === 'user') state.sort = action.payload
+    setSection: (state, action: PayloadAction<Section>) => {
+      state.page = 1
     },
-    setPageSize: (state, action: PayloadAction<PageSize>) => {
-      state.pageSize = action.payload
+    setSort: (state, action: PayloadAction<Sort>) => {
+      if (state.section === 'user') {
+        state.sort = action.payload
+        state.page = 1
+      }
+    },
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload
     },
     setWindow: (state, action: PayloadAction<Window>) => {
-      if (state.section === 'top') state.window = action.payload
+      if (state.section === 'top') {
+        state.window = action.payload
+        state.page = 1
+      }
     },
   },
 })
 
-export const { setSection, setSort, setPageSize, setWindow } =
-  filterSlice.actions
+export const selectPage = createSelector(
+  (state: RootState) => state.filters.page,
+  (x) => x
+)
+export const selectSection = (state: RootState) => state.filters.section
+export const selectSort = (state: RootState) => state.filters.sort
+export const selectWindow = (state: RootState) => state.filters.window
+export const selectShowViral = (state: RootState) => state.filters.showViral
+
+export const { setSection, setSort, setPage, setWindow } = filterSlice.actions
 export default filterSlice.reducer
